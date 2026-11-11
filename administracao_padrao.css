@@ -103,3 +103,13 @@ dialog{max-width:calc(100vw - 24px)}
   .admin-login-brand .av-logo{width:128px}
 }
 @media(max-width:680px){main{padding:12px}#parameterFields,#parameterFields .param-card{min-width:0;max-width:100%}#parameterFields{grid-template-columns:minmax(0,1fr)}}
+
+/* Integrações de IA: cadastro das chaves. */
+.integ-status{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 18px;padding:12px 14px;background:var(--av-offwhite);border:1px solid var(--av-line);border-radius:9px}
+.integ-detail{font-size:13px;color:var(--av-gray)}
+.integ-form .user-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.integ-form .user-field input,.integ-form .user-field select{width:100%;max-width:none;border:1px solid var(--av-line)}
+.integ-help{display:block;margin-top:10px;color:var(--av-gray)}
+.integ-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:16px}
+.integ-actions button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:750px){.integ-form .user-grid{grid-template-columns:1fr}.integ-actions button{flex:1 1 auto}}

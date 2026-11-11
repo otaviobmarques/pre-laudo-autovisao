@@ -204,6 +204,10 @@ def init_db():
       login TEXT UNIQUE NOT NULL COLLATE NOCASE, senha_hash TEXT NOT NULL,
       ativo INTEGER NOT NULL DEFAULT 1, criado_em TEXT DEFAULT CURRENT_TIMESTAMP
     )""")
+    con.execute("""CREATE TABLE IF NOT EXISTS integracoes_chaves (
+      nome TEXT PRIMARY KEY, chave TEXT NOT NULL, modelo TEXT, provedor TEXT,
+      operador TEXT NOT NULL, atualizado_em TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )""")
     con.commit(); con.close()
 
 def hash_password(password):
@@ -325,6 +329,48 @@ def save_document(data_url, os_internal, kind):
     path=folder/("DOC-"+kind+"-"+uuid.uuid4().hex[:8]+ext)
     path.write_bytes(raw)
     return str(path.relative_to(ROOT)).replace("\\","/")
+
+# Chaves de integração cadastradas pela Administração. A chave nunca volta inteira para a tela.
+INTEGRACOES={
+    "vision":{"titulo":"Vision OCR","env_chave":"OPENAI_API_KEY","env_modelo":"OPENAI_MODEL","modelo_padrao":"gpt-5.5","provedor_padrao":"OpenAI"},
+    "ia":{"titulo":"IA","env_chave":"IA_API_KEY","env_modelo":"IA_MODEL","modelo_padrao":"","provedor_padrao":""},
+}
+def integracao_config(nome):
+    """Chave em uso: a cadastrada no painel tem prioridade sobre a variável de ambiente."""
+    meta=INTEGRACOES[nome]
+    with db() as con:
+        row=con.execute("SELECT chave,modelo,provedor,operador,atualizado_em FROM integracoes_chaves WHERE nome=?",(nome,)).fetchone()
+    if row and row["chave"]:
+        return {"chave":row["chave"],"modelo":row["modelo"] or os.getenv(meta["env_modelo"]) or meta["modelo_padrao"],"provedor":row["provedor"] or meta["provedor_padrao"],"origem":"painel","operador":row["operador"],"atualizado_em":row["atualizado_em"]}
+    env=os.getenv(meta["env_chave"]) or ""
+    return {"chave":env,"modelo":(row["modelo"] if row else None) or os.getenv(meta["env_modelo"]) or meta["modelo_padrao"],"provedor":(row["provedor"] if row else None) or meta["provedor_padrao"],"origem":"ambiente" if env else None,"operador":None,"atualizado_em":None}
+def integracao_status(nome):
+    cfg=integracao_config(nome);chave=cfg.pop("chave")
+    cfg.update({"integracao":nome,"configurada":bool(chave),"final_chave":chave[-4:] if len(chave)>=12 else ""})
+    return cfg
+def integracao_salvar(nome,body,operador):
+    if nome not in INTEGRACOES: raise ValueError("Integração desconhecida.")
+    chave=str(body.get("chave") or "").strip()
+    modelo=str(body.get("modelo") or "").strip()[:80]
+    provedor=str(body.get("provedor") or "").strip()[:40]
+    if chave and (len(chave)<12 or len(chave)>400 or re.search(r"\s",chave)): raise ValueError("Chave inválida: confira se copiou o valor completo, sem espaços.")
+    with db() as con:
+        atual=con.execute("SELECT chave FROM integracoes_chaves WHERE nome=?",(nome,)).fetchone()
+        if not chave:
+            if not atual: raise ValueError("Informe a chave.")
+            con.execute("UPDATE integracoes_chaves SET modelo=?,provedor=?,operador=?,atualizado_em=CURRENT_TIMESTAMP WHERE nome=?",(modelo,provedor,operador,nome))
+        else:
+            con.execute("""INSERT INTO integracoes_chaves(nome,chave,modelo,provedor,operador) VALUES(?,?,?,?,?)
+              ON CONFLICT(nome) DO UPDATE SET chave=excluded.chave,modelo=excluded.modelo,provedor=excluded.provedor,operador=excluded.operador,atualizado_em=CURRENT_TIMESTAMP""",(nome,chave,modelo,provedor,operador))
+def integracao_remover(nome):
+    if nome not in INTEGRACOES: raise ValueError("Integração desconhecida.")
+    with db() as con: con.execute("DELETE FROM integracoes_chaves WHERE nome=?",(nome,))
+def integracao_testar_vision():
+    cfg=integracao_config("vision")
+    if not cfg["chave"]: raise ValueError("Nenhuma chave configurada.")
+    from openai import OpenAI
+    OpenAI(api_key=cfg["chave"],timeout=30).models.retrieve(cfg["modelo"])
+    return cfg["modelo"]
 
 def json_response(h, status, obj):
     raw=json.dumps(obj,ensure_ascii=False).encode("utf-8")
@@ -907,6 +953,9 @@ class Handler(SimpleHTTPRequestHandler):
             return json_response(self,403,{"ok":False,"erro":"Arquivo não publicado."})
         if path.startswith("/comprovantes/") and not admin_user(self):
             return json_response(self,403,{"ok":False,"erro":"Documento restrito à Administração."})
+        if path=="/api/admin/integracoes":
+            if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
+            return json_response(self,200,{"ok":True,"integracoes":{n:integracao_status(n) for n in INTEGRACOES}})
         if path=="/api/admin/sessao":
             u=admin_user(self)
             return json_response(self,200 if u else 401,{"ok":bool(u),"usuario":u})
@@ -959,9 +1008,10 @@ class Handler(SimpleHTTPRequestHandler):
             return json_response(self,400,{"ok":False,"erro":"Imagem ausente"})
         try:
             from openai import OpenAI
-            key=os.getenv("OPENAI_API_KEY")
-            if not key: raise RuntimeError("OPENAI_API_KEY ausente")
-            model=os.getenv("OPENAI_MODEL","gpt-5.5")
+            cfg=integracao_config("vision")
+            key=cfg["chave"]
+            if not key: raise RuntimeError("Chave do Vision OCR não configurada. Cadastre em Administração > Integração Vision OCR.")
+            model=cfg["modelo"]
             client=OpenAI(api_key=key)
             resp=client.responses.create(
                 model=model,
@@ -1032,6 +1082,21 @@ class Handler(SimpleHTTPRequestHandler):
             token=secrets.token_urlsafe(40)
             ADMIN_SESSIONS[token]={"id":u["id"],"expires":datetime.now(timezone.utc)+timedelta(hours=8)}
             return json_response(self,200,{"ok":True,"token":token,"usuario":{"nome":u["nome"],"login":u["login"]}})
+        if path in ("/api/admin/integracoes","/api/admin/integracoes/remover","/api/admin/integracoes/testar"):
+            user=admin_user(self)
+            if not user: return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
+            nome=str(body.get("integracao") or "")
+            try:
+                if path.endswith("/testar"):
+                    if nome!="vision": raise ValueError("Teste disponível apenas para o Vision OCR.")
+                    try: modelo=integracao_testar_vision()
+                    except ValueError: raise
+                    except Exception as e: return json_response(self,400,{"ok":False,"erro":"A OpenAI recusou a chave ou o modelo: "+str(e)[:300]})
+                    return json_response(self,200,{"ok":True,"modelo":modelo})
+                if path.endswith("/remover"): integracao_remover(nome)
+                else: integracao_salvar(nome,body,user["login"])
+                return json_response(self,200,{"ok":True,"integracao":integracao_status(nome)})
+            except ValueError as e: return json_response(self,400,{"ok":False,"erro":str(e)})
         if path=="/api/admin/logout":
             auth=self.headers.get("Authorization","")
             ADMIN_SESSIONS.pop(auth[7:].strip() if auth.startswith("Bearer ") else "",None)

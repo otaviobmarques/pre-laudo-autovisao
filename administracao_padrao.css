@@ -70,3 +70,36 @@ section[data-name="Ordens de serviço"] article input{width:100%;max-width:520px
 .user-table th,.v935-admin-panel th,table th{font-family:var(--av-font-title);font-weight:800}
 /* Parametrizações: o interruptor já indica o estado; a linha fica neutra. */
 #parameterFields .param-toggle:has(input:checked){background:var(--av-white);border-color:var(--av-line)}
+
+/* Responsividade da administração. */
+.right{min-width:0;flex:1}
+.v935-admin-panel{grid-template-columns:minmax(0,1fr)}
+.v935-admin-panel article{min-width:0;overflow-x:auto}
+.user-table-wrap,.rev-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+main img,main video{max-width:100%}
+dialog{max-width:calc(100vw - 24px)}
+@media(max-width:900px){
+  aside{width:210px;padding:20px 10px}
+  main{padding:18px}
+  header{padding:0 18px}
+}
+@media(max-width:680px){
+  /* Menu em uma linha rolável, sempre visível no topo. */
+  aside{width:100%;padding:10px 12px 8px;position:sticky;top:0;z-index:50}
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 2px 8px;border:0}
+  .brand .av-logo{width:104px;margin:0}
+  .brand small{margin:0;font-size:9px}
+  .av-nav{display:flex;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -12px;padding:0 12px 2px}
+  .av-nav::-webkit-scrollbar{display:none}
+  .av-nav .nav{flex:none;width:auto;white-space:nowrap;padding:8px 12px;font-size:13px}
+  header{height:auto;min-height:44px;padding:8px 14px}
+  header small{display:none}
+  main>section>h1{font-size:23px}
+  .rev-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .rev-tabs button{flex:none;white-space:nowrap}
+  .rev-toolbar>*{min-width:0;max-width:100%}
+  .v935-admin-panel article{padding:16px}
+  .param-toolbar{flex-wrap:wrap;gap:8px}
+  .admin-login-brand .av-logo{width:128px}
+}
+@media(max-width:680px){main{padding:12px}#parameterFields,#parameterFields .param-card{min-width:0;max-width:100%}#parameterFields{grid-template-columns:minmax(0,1fr)}}

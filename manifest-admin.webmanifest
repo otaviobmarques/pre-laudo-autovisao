@@ -1,0 +1,34 @@
+{
+  "id": "/administracao",
+  "name": "Auto Visão Administração",
+  "short_name": "Administração",
+  "description": "Administração do Pré-Laudo da Auto Visão.",
+  "start_url": "/Camada_Intermediaria_v9346_Precos_ERP.html",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ED3237",
+  "theme_color": "#ED3237",
+  "icons": [
+    {
+      "src": "/assets/brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/assets/brand/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -86,3 +86,19 @@ label .optional-mark,label .required-mark{display:inline;text-align:left}
 .required-mark{color:var(--av-red-deep)}
 label[data-operator-field]{display:flex;align-items:baseline;justify-content:flex-start;flex-wrap:wrap;gap:0 6px;text-align:left}
 label[data-operator-field] .optional-mark{margin-left:0}
+
+/* Responsividade do vistoriador. */
+.wrap img{max-width:100%}
+@media(max-width:400px){
+  .operator-brand{padding:12px 14px}
+  .operator-brand .app-badge{display:none}
+  .step-progress{gap:3px}
+  .step-progress li{gap:3px;padding:5px 0;font-size:9.5px}
+  .step-progress .step-number{width:15px;height:15px;font-size:9px}
+  #who{padding-right:86px}
+}
+@media(min-width:700px){
+  .operator-brand{padding:18px 22px}
+  .operator-brand .av-logo{width:150px}
+  .step-progress li{font-size:12px;padding:8px 6px}
+}

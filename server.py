@@ -833,6 +833,7 @@ def classificar_os(payload, modo):
     return result["status"], ("AGUARDANDO_LIBERACAO" if result["status"] == "PENDENTE" else "CONCLUIDA")
 
 class Handler(SimpleHTTPRequestHandler):
+    extensions_map={**SimpleHTTPRequestHandler.extensions_map,'.webmanifest':'application/manifest+json','.woff2':'font/woff2','.svg':'image/svg+xml'}
     def end_headers(self):
         self.send_header('Cache-Control','no-store, max-age=0')
         super().end_headers()
@@ -850,6 +851,9 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path=urlparse(self.path).path
+        if path in ("","/"):
+            # A raiz do domínio abre o Pré-Laudo do vistoriador; o laboratório segue em /index.html.
+            self.send_response(302);self.send_header("Location","/Pre_Laudo_Auto_Visao_v370_Precos_ERP.html");self.send_header("Content-Length","0");self.end_headers();return
         from urllib.parse import unquote
         import posixpath
         private_path=posixpath.normpath('/'+unquote(path).replace('\\','/').lstrip('/')).lower()

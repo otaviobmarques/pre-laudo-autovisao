@@ -28,6 +28,8 @@ def _persistent(name, is_dir):
     target=DATA_DIR/name
     if is_dir:
         target.mkdir(parents=True,exist_ok=True)
+        # Um atalho que aponte para outro lugar (ex.: sobra de outro ambiente) é refeito para o volume.
+        if local.is_symlink() and local.resolve()!=target.resolve(): local.unlink()
         if not local.is_symlink() and not local.exists(): local.symlink_to(target,target_is_directory=True)
         return local
     if not target.exists() and local.exists(): target.write_bytes(local.read_bytes())
@@ -364,6 +366,37 @@ def integracao_salvar(nome,body,operador):
 def integracao_remover(nome):
     if nome not in INTEGRACOES: raise ValueError("Integração desconhecida.")
     with db() as con: con.execute("DELETE FROM integracoes_chaves WHERE nome=?",(nome,))
+# Acesso à API do ERPFlex cadastrado pela Administração (usuário e senha). A senha nunca volta para a tela.
+def erp_acesso_painel():
+    try:
+        with db() as con:
+            row=con.execute("SELECT provedor,chave FROM integracoes_chaves WHERE nome='erpflex'").fetchone()
+    except sqlite3.Error: return None
+    return {"username":row["provedor"],"password":row["chave"]} if row and row["provedor"] and row["chave"] else None
+clientes_erp.PANEL_ACCESS=erp_acesso_painel
+def erp_acesso_status():
+    origem=clientes_erp.access_source();usuario="";operador=None;atualizado=None
+    if origem=="painel":
+        with db() as con:
+            row=con.execute("SELECT provedor,operador,atualizado_em FROM integracoes_chaves WHERE nome='erpflex'").fetchone()
+        usuario,operador,atualizado=row["provedor"],row["operador"],row["atualizado_em"]
+    elif origem=="ambiente": usuario=(clientes_erp.env_access() or {}).get("username","")
+    return {"configurado":bool(origem),"origem":origem,"usuario":usuario,"operador":operador,"atualizado_em":atualizado}
+def erp_acesso_salvar(body,operador):
+    usuario=str(body.get("usuario") or "").strip();senha=str(body.get("senha") or "")
+    if not usuario or len(usuario)>200: raise ValueError("Informe o usuário da API do ERP.")
+    with db() as con:
+        atual=con.execute("SELECT 1 FROM integracoes_chaves WHERE nome='erpflex'").fetchone()
+        if not senha:
+            if not atual: raise ValueError("Informe a senha da API do ERP.")
+            con.execute("UPDATE integracoes_chaves SET provedor=?,operador=?,atualizado_em=CURRENT_TIMESTAMP WHERE nome='erpflex'",(usuario,operador))
+        else:
+            if len(senha)>400: raise ValueError("Senha inválida.")
+            con.execute("""INSERT INTO integracoes_chaves(nome,chave,modelo,provedor,operador) VALUES('erpflex',?,'',?,?)
+              ON CONFLICT(nome) DO UPDATE SET chave=excluded.chave,provedor=excluded.provedor,operador=excluded.operador,atualizado_em=CURRENT_TIMESTAMP""",(senha,usuario,operador))
+def erp_acesso_remover():
+    with db() as con: con.execute("DELETE FROM integracoes_chaves WHERE nome='erpflex'")
+
 def integracao_testar_vision():
     cfg=integracao_config("vision")
     if not cfg["chave"]: raise ValueError("Nenhuma chave configurada.")
@@ -958,6 +991,9 @@ class Handler(SimpleHTTPRequestHandler):
         if path=="/api/admin/integracoes":
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
             return json_response(self,200,{"ok":True,"integracoes":{n:integracao_status(n) for n in INTEGRACOES}})
+        if path=="/api/admin/erp/acesso":
+            if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
+            return json_response(self,200,{"ok":True,"acesso":erp_acesso_status()})
         if path=="/api/admin/sessao":
             u=admin_user(self)
             return json_response(self,200 if u else 401,{"ok":bool(u),"usuario":u})
@@ -978,7 +1014,7 @@ class Handler(SimpleHTTPRequestHandler):
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Acesso administrativo obrigatório."})
             return json_response(self,200,{"ok":True,"usuarios":list_users()})
         if path=="/api/health":
-            return json_response(self,200,{"ok":True,"database":DB_PATH.name,"comprovantes":str(COMPROVANTES_DIR.name),"parametros_schema":3,"parametros_campos":sorted(policy.DEFAULTS),"servidor_build":"precos-erp-1"})
+            return json_response(self,200,{"ok":True,"database":DB_PATH.name,"comprovantes":str(COMPROVANTES_DIR.name),"armazenamento_persistente":DATA_DIR!=ROOT and COMPROVANTES_DIR.resolve()==(DATA_DIR/"comprovantes").resolve() and os.access(COMPROVANTES_DIR,os.W_OK),"parametros_schema":3,"parametros_campos":sorted(policy.DEFAULTS),"servidor_build":"precos-erp-1"})
         if path=="/api/admin/os/historico":
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
             from urllib.parse import parse_qs
@@ -1084,6 +1120,14 @@ class Handler(SimpleHTTPRequestHandler):
             token=secrets.token_urlsafe(40)
             ADMIN_SESSIONS[token]={"id":u["id"],"expires":datetime.now(timezone.utc)+timedelta(hours=8)}
             return json_response(self,200,{"ok":True,"token":token,"usuario":{"nome":u["nome"],"login":u["login"]}})
+        if path in ("/api/admin/erp/acesso","/api/admin/erp/acesso/remover"):
+            user=admin_user(self)
+            if not user: return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
+            try:
+                if path.endswith("/remover"): erp_acesso_remover()
+                else: erp_acesso_salvar(body,user["login"])
+                return json_response(self,200,{"ok":True,"acesso":erp_acesso_status()})
+            except ValueError as e: return json_response(self,400,{"ok":False,"erro":str(e)})
         if path in ("/api/admin/integracoes","/api/admin/integracoes/remover","/api/admin/integracoes/testar"):
             user=admin_user(self)
             if not user: return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})

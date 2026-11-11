@@ -37,11 +37,21 @@ def env_access():
  username=(os.environ.get('ERPFLEX_USERNAME') or '').strip();password=os.environ.get('ERPFLEX_PASSWORD') or ''
  return {'username':username,'password':password} if username and password else None
 
-def has_access():
- """Há acesso configurado: variáveis de ambiente ou a credencial protegida do Windows."""
- return bool(env_access()) or ACCESS.exists()
+# O servidor registra aqui a leitura do acesso cadastrado no Painel Administrativo.
+PANEL_ACCESS=None
+def panel_access():
+ try:value=PANEL_ACCESS() if PANEL_ACCESS else None
+ except Exception:value=None
+ return value if value and value.get('username') and value.get('password') else None
 
-def load_access():return env_access() or json.loads(protect(ACCESS.read_bytes(),True).decode())
+def has_access():
+ """Há acesso configurado: painel administrativo, variáveis de ambiente ou a credencial protegida do Windows."""
+ return bool(panel_access() or env_access()) or ACCESS.exists()
+
+def access_source():
+ return 'painel' if panel_access() else 'ambiente' if env_access() else 'windows' if ACCESS.exists() else None
+
+def load_access():return panel_access() or env_access() or json.loads(protect(ACCESS.read_bytes(),True).decode())
 
 def init(con):
  con.execute('CREATE TABLE IF NOT EXISTS erp_clientes(erp_id TEXT PRIMARY KEY,local_id TEXT NOT NULL UNIQUE,data_json TEXT NOT NULL)')

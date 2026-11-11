@@ -50,5 +50,41 @@
       const provedor=document.getElementById('integ-provedor-'+nome);if(provedor&&!provedor.value&&i.provedor)provedor.value=i.provedor;
     }catch(err){estado.replaceChildren(el('span',{className:'tag off',textContent:'Não foi possível consultar'}),el('span',{className:'integ-detail',textContent:err.message}))}
   }
-  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button.nav');if(b&&PAGINAS[b.dataset.page])carregar(PAGINAS[b.dataset.page])});
+  document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button.nav');if(b&&PAGINAS[b.dataset.page])carregar(PAGINAS[b.dataset.page]);if(b&&b.dataset.page==='Integração ERP')carregarErp()});
+
+  /* Integração ERP: usuário e senha da API do ERPFlex. */
+  let erp=null;
+  function montarErp(){
+    if(erp)return erp;
+    const page=document.querySelector('section.page[data-name="Integração ERP"]');if(!page)return null;
+    const estado=el('div',{className:'integ-status'});
+    const usuario=el('input',{id:'erp-acesso-usuario',type:'text',autocomplete:'off',spellcheck:false,placeholder:'Usuário da API do ERPFlex'});
+    const senha=el('input',{id:'erp-acesso-senha',type:'password',autocomplete:'new-password',placeholder:'Senha da API'});
+    const msg=el('div',{className:'feedback',role:'status'});
+    const salvar=el('button',{type:'submit',className:'primary',textContent:'Salvar acesso'});
+    const remover=el('button',{type:'button',className:'secondary',textContent:'Remover acesso'});
+    const form=el('form',{className:'integ-form'},el('div',{className:'user-grid'},campo(usuario.id,'Usuário',usuario),campo(senha.id,'Senha',senha)),el('small',{className:'integ-help',textContent:'Deixe a senha vazia para manter a atual e alterar só o usuário. Depois de salvar, use os botões de atualização abaixo para fazer a primeira carga.'}),el('div',{className:'integ-actions'},remover,salvar),msg);
+    const card=el('article',{className:'erp-acesso-card'},el('h3',{textContent:'Acesso à API do ERP'}),estado,form);
+    const titulo=page.querySelector('h1');if(titulo)titulo.after(card);else page.prepend(card);
+    const aviso=(texto,tipo)=>{msg.textContent=texto;msg.className='feedback'+(tipo?' '+tipo:'')};
+    const ocupar=on=>[salvar,remover].forEach(b=>b.disabled=on);
+    async function enviar(caminho,corpo){const r=await fetch(API+caminho,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(corpo)});const d=await r.json();if(!r.ok||!d.ok)throw Error(d.erro||'Erro de comunicação');return d}
+    form.addEventListener('submit',async e=>{e.preventDefault();ocupar(true);aviso('Salvando...');
+      try{await enviar('/api/admin/erp/acesso',{usuario:usuario.value,senha:senha.value});senha.value='';await carregarErp();aviso('Acesso salvo.','ok')}
+      catch(err){aviso(err.message,'error')}finally{ocupar(false)}});
+    remover.addEventListener('click',async()=>{if(!confirm('Remover o acesso ao ERP cadastrado no painel?'))return;ocupar(true);
+      try{await enviar('/api/admin/erp/acesso/remover',{});usuario.value='';await carregarErp();aviso('Acesso removido do painel.','ok')}
+      catch(err){aviso(err.message,'error')}finally{ocupar(false)}});
+    erp={estado,usuario};return erp;
+  }
+  async function carregarErp(){
+    const ui=montarErp();if(!ui)return;
+    try{
+      const r=await fetch(API+'/api/admin/erp/acesso');const d=await r.json();if(!r.ok||!d.ok)throw Error(d.erro||'Erro de comunicação');
+      const a=d.acesso;ui.estado.replaceChildren();
+      const origem={painel:'cadastrado neste painel'+(a.operador?' por '+a.operador:''),ambiente:'vindo da configuração do servidor',windows:'credencial protegida do Windows'}[a.origem]||'';
+      ui.estado.append(el('span',{className:'tag '+(a.configurado?'on':'off'),textContent:a.configurado?'Acesso configurado':'Sem acesso'}),el('span',{className:'integ-detail',textContent:[a.usuario?'usuário '+a.usuario:'',origem].filter(Boolean).join(' · ')}));
+      if(!ui.usuario.value&&a.usuario)ui.usuario.value=a.usuario;
+    }catch(err){ui.estado.replaceChildren(el('span',{className:'tag off',textContent:'Não foi possível consultar'}),el('span',{className:'integ-detail',textContent:err.message}))}
+  }
 })();

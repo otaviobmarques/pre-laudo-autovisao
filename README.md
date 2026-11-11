@@ -15,7 +15,7 @@ Variáveis do serviço:
 - `PORT`: porta do servidor. Com ela definida, o servidor aceita conexões externas.
 - `DATA_DIR`: pasta do volume persistente (banco SQLite, comprovantes e catálogos). Sem ela, tudo fica na pasta do programa.
 - `ADMIN_LOGIN` e `ADMIN_PASSWORD`: criam o primeiro administrador, somente quando ainda não existe nenhum.
-- `ERPFLEX_USERNAME` e `ERPFLEX_PASSWORD`: acesso à API do ERPFlex para as cargas de clientes, produtos, pagamentos, vistoriadores e preços. Com elas definidas, as cargas diárias e os botões da Integração ERP funcionam na hospedagem.
+- `ERPFLEX_USERNAME` e `ERPFLEX_PASSWORD`: acesso à API do ERPFlex para as cargas de clientes, produtos, pagamentos, vistoriadores e preços. Com elas definidas, as cargas diárias e os botões da Integração ERP funcionam na hospedagem. O usuário e a senha também podem ser cadastrados em Administração > Integração ERP, e esse cadastro tem prioridade sobre as variáveis.
 - `OPENAI_API_KEY` e `OPENAI_MODEL`: chave e modelo da leitura de comprovantes. A chave cadastrada em Administração > Integração IA tem prioridade.
 
 Na hospedagem, liberar OS, editar OS e ver o histórico ficam disponíveis a qualquer administrador logado, e a leitura de comprovantes exige login. No Windows, o acesso ao ERPFlex continua podendo ser guardado pela proteção de credenciais do sistema; as variáveis de ambiente têm prioridade.

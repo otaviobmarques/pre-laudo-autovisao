@@ -1114,6 +1114,8 @@ class Handler(SimpleHTTPRequestHandler):
                 return json_response(self,500,{"ok":False,"erro":"Erro interno ao salvar usuário."})
 
         if path=="/api/ler-comprovante":
+            # Exposto na internet: a leitura consome a chave OpenAI, então exige login.
+            if not get_session(self) and not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Faça login."})
             return self._vision_admin(body)
 
         if path=="/api/os":

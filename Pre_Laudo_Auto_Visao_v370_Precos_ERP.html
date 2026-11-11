@@ -1439,7 +1439,7 @@ async function readPaymentProof(part,file){
     for(var attempt=0;attempt<2;attempt++){
       try{
         response=await fetch(API_BASE+'/api/ler-comprovante',{
-          method:'POST',headers:{'Content-Type':'application/json'},
+          method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},
           body:JSON.stringify({image:dataUrl})
         });
         answer=await response.json();

@@ -6,17 +6,43 @@ article{padding:20px}article h3{border-left:3px solid var(--av-red-deep);padding
 p,.field small,.stats small,.modal-sub,.rev-muted,.v92-muted{color:var(--ui-muted)}
 button:not(.nav):not(.eye-button){min-height:36px;border-radius:8px;align-items:center;justify-content:center}
 .primary,.secondary,.btn,.rev-tabs button{font-size:12px;padding:9px 12px}
-.secondary{border-color:#d2d8e1;color:#4b5565;background:white}
-.btn,.user-table button{background:#fff4f6;color:var(--av-red-deep)}
+.secondary{border-color:#DED8DC;color:#696267;background:white}
+.btn,.user-table button{background:#FDEEEE;color:var(--av-red-deep)}
 .nav.active,.nav:hover,.rev-tabs button.selected{background:var(--av-red-deep);color:white}
 .user-field label,.v92-grid label{font-family:var(--av-font-action);font-size:12px;color:var(--av-graphite)}
 .user-field input,.user-field select,.v92-grid input,.v92-edit textarea,.v92-edit select,.rev-search input{min-height:38px;padding:9px 11px;font-size:13px}
-.user-table-wrap{border:1px solid var(--ui-line);border-radius:9px}.user-table th{background:var(--ui-soft);color:#5e6c7f;font-size:12px}.user-table td{border-top-color:var(--ui-line)}.user-table tbody tr:hover{background:#fcf9fa}
-.rev-detail-grid>div,.rev-pay-grid>div,.v9319-finance-grid>div,.password-preserved,.v92-hist{background:var(--ui-soft);border:1px solid #e0e7f0;border-radius:9px}
+.user-table-wrap{border:1px solid var(--ui-line);border-radius:9px}.user-table th{background:var(--ui-soft);color:#696267;font-size:12px}.user-table td{border-top-color:var(--ui-line)}.user-table tbody tr:hover{background:#FDEEEE}
+.rev-detail-grid>div,.rev-pay-grid>div,.v9319-finance-grid>div,.password-preserved,.v92-hist{background:var(--ui-soft);border:1px solid #DED8DC;border-radius:9px}
 .rev-tabs{background:var(--ui-soft);border:1px solid var(--ui-line)}
 .v9319-finance,.v92-doc,.v934-doc-card{border-color:var(--ui-line)}
-.rev-alert,.v92-summary,.v9319-finance-alert{background:#fcf0f2;color:#991b1b;border-left-color:var(--av-red-deep)}
+.rev-alert,.v92-summary,.v9319-finance-alert{background:#FDEEEE;color:#A81D25;border-left-color:var(--av-red-deep)}
 .param-toolbar{--param-red:var(--av-red-deep)}
 @media(max-width:680px){main{padding:12px}article{padding:14px}header{padding:0 14px;height:58px}.nav{font-size:11px}.user-field input,.user-field select,.v92-grid input,.v92-edit select{min-height:42px}button:not(.nav):not(.eye-button){min-height:40px}.stats{gap:8px}.stats article{min-width:0}.rev-toolbar{align-items:stretch}.rev-tabs{width:100%}.rev-tabs button{flex:1;white-space:normal}#parameterFields .param-card{padding:14px}.param-toolbar{top:6px}}
 
 #v9318OsDialog .v9317-review[hidden],#v9318OsDialog .v934-doc-card[hidden]{display:none!important}
+
+/* Design System Auto Visão — administração. */
+aside{background:var(--av-black)}
+.brand{font-family:var(--av-font-title);font-weight:900;letter-spacing:.01em}
+.brand small{display:flex;align-items:center;gap:7px;font-family:var(--av-font-title);font-weight:800;letter-spacing:.14em;color:var(--av-white);opacity:.9}
+.brand small::before{content:"";width:18px;height:3px;border-radius:2px;background:var(--av-red)}
+.group{font-family:var(--av-font-title);font-weight:800;letter-spacing:.14em;color:var(--av-rim)}
+.nav{font-family:var(--av-font-title);font-weight:800;font-size:14px}
+.nav.active,.nav:hover,.rev-tabs button.selected{background:var(--av-red);color:var(--av-white)}
+header{border-top:4px solid var(--av-red)}
+header b{font-family:var(--av-font-title);font-weight:900;font-size:17px;color:var(--av-black)}
+article h3{border-left-color:var(--av-red)}
+.stats article small{font-family:var(--av-font-title);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+.tag{border-radius:999px;font-weight:700}
+/* Tela de acesso */
+.admin-login-gate{font-family:var(--av-font-body);background-color:var(--av-red);
+  background-image:repeating-radial-gradient(circle at 104% 50%,rgba(21,20,21,.09) 0 34px,transparent 34px 104px,rgba(21,20,21,.09) 104px 138px)}
+.admin-login-card{border:0;border-top:0;border-radius:20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
+.admin-login-brand{font-family:var(--av-font-title);font-weight:900}
+.admin-login-brand-mark{background:var(--av-red)}
+.admin-login-brand small{font-family:var(--av-font-title);font-weight:800;letter-spacing:.14em;color:var(--av-red-deep)}
+.admin-login-card h1{font-family:var(--av-font-title);font-weight:900}
+.admin-login-field label{font-weight:600;color:var(--av-black)}
+.admin-login-field input:focus{outline:2px solid rgba(21,20,21,.15);border-color:var(--av-black)}
+.admin-login-submit{font-family:var(--av-font-title);font-weight:900;font-size:15px;border-radius:12px}
+.admin-login-foot span{color:var(--av-red)}

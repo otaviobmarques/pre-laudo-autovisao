@@ -35,3 +35,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* Fundo de impacto: vermelho marca com curvas concêntricas (preto a 9%), centro fora da peça, à direita. */
 .av-impact{position:relative;overflow:hidden;background-color:var(--av-red);color:var(--av-white);
   background-image:repeating-radial-gradient(circle at 108% 50%,rgba(21,20,21,.09) 0 17px,transparent 17px 52px,rgba(21,20,21,.09) 52px 69px)}
+
+/* Logotipo oficial: versão principal sobre branco, branco integral sobre vermelho ou escuro. */
+.av-logo{display:block;height:auto;max-width:100%}

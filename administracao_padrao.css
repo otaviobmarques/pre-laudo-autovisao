@@ -46,3 +46,7 @@ article h3{border-left-color:var(--av-red)}
 .admin-login-field input:focus{outline:2px solid rgba(21,20,21,.15);border-color:var(--av-black)}
 .admin-login-submit{font-family:var(--av-font-title);font-weight:900;font-size:15px;border-radius:12px}
 .admin-login-foot span{color:var(--av-red)}
+.brand .av-logo{width:158px;margin-bottom:12px}
+.admin-login-brand .av-logo{width:150px}
+.admin-login-brand{align-items:flex-end;margin-bottom:30px}
+@media(max-width:680px){.brand .av-logo{width:120px;margin-bottom:6px}}

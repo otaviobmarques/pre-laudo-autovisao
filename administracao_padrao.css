@@ -50,3 +50,23 @@ article h3{border-left-color:var(--av-red)}
 .admin-login-brand .av-logo{width:150px}
 .admin-login-brand{align-items:flex-end;margin-bottom:30px}
 @media(max-width:680px){.brand .av-logo{width:120px;margin-bottom:6px}}
+
+/* Design System Auto Visão — refinamentos da administração. */
+/* O título da página já aparece no conteúdo; no topo ele vira um rótulo de seção. */
+header b{display:flex;align-items:center;gap:8px;font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--av-gray)}
+header b::before{content:"";width:22px;height:3px;border-radius:2px;background:var(--av-red)}
+header small{font-size:11px;color:var(--av-rim)}
+main>section>h1{font-size:28px;margin-bottom:6px}
+/* Indicadores do painel */
+.stats article{padding:18px 20px}
+.stats article h1{margin:8px 0 0;font-size:32px;line-height:1.1}
+.stats article h1+small{display:block;margin-top:8px;letter-spacing:0;text-transform:none;font-family:var(--av-font-body);font-weight:500;font-size:12px}
+/* Campos e tabelas com a mesma altura e o mesmo traço em todos os módulos */
+.v935-admin-panel .user-field input,.v935-admin-panel .user-field select,.v935-admin-panel #adminSearch,.v937-dialog .user-field input,.v937-dialog .user-field select{min-height:38px;padding:9px 11px;font-size:13px;border-color:var(--av-line);border-radius:8px}
+.v935-admin-panel .user-field label,.v937-dialog .user-field label{font-size:12px;margin:0 0 6px}
+.v935-admin-panel table{border:1px solid var(--av-line);border-radius:9px;border-collapse:separate;border-spacing:0;overflow:hidden}
+.v935-admin-panel th{background:var(--av-offwhite);color:var(--av-gray);font-size:12px}
+section[data-name="Ordens de serviço"] article input{width:100%;max-width:520px}
+.user-table th,.v935-admin-panel th,table th{font-family:var(--av-font-title);font-weight:800}
+/* Parametrizações: o interruptor já indica o estado; a linha fica neutra. */
+#parameterFields .param-toggle:has(input:checked){background:var(--av-white);border-color:var(--av-line)}

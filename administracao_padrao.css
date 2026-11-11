@@ -6,17 +6,110 @@ article{padding:20px}article h3{border-left:3px solid var(--av-red-deep);padding
 p,.field small,.stats small,.modal-sub,.rev-muted,.v92-muted{color:var(--ui-muted)}
 button:not(.nav):not(.eye-button){min-height:36px;border-radius:8px;align-items:center;justify-content:center}
 .primary,.secondary,.btn,.rev-tabs button{font-size:12px;padding:9px 12px}
-.secondary{border-color:#d2d8e1;color:#4b5565;background:white}
-.btn,.user-table button{background:#fff4f6;color:var(--av-red-deep)}
+.secondary{border-color:#DED8DC;color:#696267;background:white}
+.btn,.user-table button{background:#FDEEEE;color:var(--av-red-deep)}
 .nav.active,.nav:hover,.rev-tabs button.selected{background:var(--av-red-deep);color:white}
 .user-field label,.v92-grid label{font-family:var(--av-font-action);font-size:12px;color:var(--av-graphite)}
 .user-field input,.user-field select,.v92-grid input,.v92-edit textarea,.v92-edit select,.rev-search input{min-height:38px;padding:9px 11px;font-size:13px}
-.user-table-wrap{border:1px solid var(--ui-line);border-radius:9px}.user-table th{background:var(--ui-soft);color:#5e6c7f;font-size:12px}.user-table td{border-top-color:var(--ui-line)}.user-table tbody tr:hover{background:#fcf9fa}
-.rev-detail-grid>div,.rev-pay-grid>div,.v9319-finance-grid>div,.password-preserved,.v92-hist{background:var(--ui-soft);border:1px solid #e0e7f0;border-radius:9px}
+.user-table-wrap{border:1px solid var(--ui-line);border-radius:9px}.user-table th{background:var(--ui-soft);color:#696267;font-size:12px}.user-table td{border-top-color:var(--ui-line)}.user-table tbody tr:hover{background:#FDEEEE}
+.rev-detail-grid>div,.rev-pay-grid>div,.v9319-finance-grid>div,.password-preserved,.v92-hist{background:var(--ui-soft);border:1px solid #DED8DC;border-radius:9px}
 .rev-tabs{background:var(--ui-soft);border:1px solid var(--ui-line)}
 .v9319-finance,.v92-doc,.v934-doc-card{border-color:var(--ui-line)}
-.rev-alert,.v92-summary,.v9319-finance-alert{background:#fcf0f2;color:#991b1b;border-left-color:var(--av-red-deep)}
+.rev-alert,.v92-summary,.v9319-finance-alert{background:#FDEEEE;color:#A81D25;border-left-color:var(--av-red-deep)}
 .param-toolbar{--param-red:var(--av-red-deep)}
 @media(max-width:680px){main{padding:12px}article{padding:14px}header{padding:0 14px;height:58px}.nav{font-size:11px}.user-field input,.user-field select,.v92-grid input,.v92-edit select{min-height:42px}button:not(.nav):not(.eye-button){min-height:40px}.stats{gap:8px}.stats article{min-width:0}.rev-toolbar{align-items:stretch}.rev-tabs{width:100%}.rev-tabs button{flex:1;white-space:normal}#parameterFields .param-card{padding:14px}.param-toolbar{top:6px}}
 
 #v9318OsDialog .v9317-review[hidden],#v9318OsDialog .v934-doc-card[hidden]{display:none!important}
+
+/* Design System Auto Visão — administração. */
+aside{background:var(--av-black)}
+.brand{font-family:var(--av-font-title);font-weight:900;letter-spacing:.01em}
+.brand small{display:flex;align-items:center;gap:7px;font-family:var(--av-font-title);font-weight:800;letter-spacing:.14em;color:var(--av-white);opacity:.9}
+.brand small::before{content:"";width:18px;height:3px;border-radius:2px;background:var(--av-red)}
+.group{font-family:var(--av-font-title);font-weight:800;letter-spacing:.14em;color:var(--av-rim)}
+.nav{font-family:var(--av-font-title);font-weight:800;font-size:14px}
+.nav.active,.nav:hover,.rev-tabs button.selected{background:var(--av-red);color:var(--av-white)}
+header{border-top:4px solid var(--av-red)}
+header b{font-family:var(--av-font-title);font-weight:900;font-size:17px;color:var(--av-black)}
+article h3{border-left-color:var(--av-red)}
+.stats article small{font-family:var(--av-font-title);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+.tag{border-radius:999px;font-weight:700}
+/* Tela de acesso */
+.admin-login-gate{font-family:var(--av-font-body);background-color:var(--av-red);
+  background-image:repeating-radial-gradient(circle at 104% 50%,rgba(21,20,21,.09) 0 34px,transparent 34px 104px,rgba(21,20,21,.09) 104px 138px)}
+.admin-login-card{border:0;border-top:0;border-radius:20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.45)}
+.admin-login-brand{font-family:var(--av-font-title);font-weight:900}
+.admin-login-brand-mark{background:var(--av-red)}
+.admin-login-brand small{font-family:var(--av-font-title);font-weight:800;letter-spacing:.14em;color:var(--av-red-deep)}
+.admin-login-card h1{font-family:var(--av-font-title);font-weight:900}
+.admin-login-field label{font-weight:600;color:var(--av-black)}
+.admin-login-field input:focus{outline:2px solid rgba(21,20,21,.15);border-color:var(--av-black)}
+.admin-login-submit{font-family:var(--av-font-title);font-weight:900;font-size:15px;border-radius:12px}
+.admin-login-foot span{color:var(--av-red)}
+.brand .av-logo{width:158px;margin-bottom:12px}
+.admin-login-brand .av-logo{width:150px}
+.admin-login-brand{align-items:flex-end;margin-bottom:30px}
+@media(max-width:680px){.brand .av-logo{width:120px;margin-bottom:6px}}
+
+/* Design System Auto Visão — refinamentos da administração. */
+/* O título da página já aparece no conteúdo; no topo ele vira um rótulo de seção. */
+header b{display:flex;align-items:center;gap:8px;font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--av-gray)}
+header b::before{content:"";width:22px;height:3px;border-radius:2px;background:var(--av-red)}
+header small{font-size:11px;color:var(--av-rim)}
+main>section>h1{font-size:28px;margin-bottom:6px}
+/* Indicadores do painel */
+.stats article{padding:18px 20px}
+.stats article h1{margin:8px 0 0;font-size:32px;line-height:1.1}
+.stats article h1+small{display:block;margin-top:8px;letter-spacing:0;text-transform:none;font-family:var(--av-font-body);font-weight:500;font-size:12px}
+/* Campos e tabelas com a mesma altura e o mesmo traço em todos os módulos */
+.v935-admin-panel .user-field input,.v935-admin-panel .user-field select,.v935-admin-panel #adminSearch,.v937-dialog .user-field input,.v937-dialog .user-field select{min-height:38px;padding:9px 11px;font-size:13px;border-color:var(--av-line);border-radius:8px}
+.v935-admin-panel .user-field label,.v937-dialog .user-field label{font-size:12px;margin:0 0 6px}
+.v935-admin-panel table{border:1px solid var(--av-line);border-radius:9px;border-collapse:separate;border-spacing:0;overflow:hidden}
+.v935-admin-panel th{background:var(--av-offwhite);color:var(--av-gray);font-size:12px}
+section[data-name="Ordens de serviço"] article input{width:100%;max-width:520px}
+.user-table th,.v935-admin-panel th,table th{font-family:var(--av-font-title);font-weight:800}
+/* Parametrizações: o interruptor já indica o estado; a linha fica neutra. */
+#parameterFields .param-toggle:has(input:checked){background:var(--av-white);border-color:var(--av-line)}
+
+/* Responsividade da administração. */
+.right{min-width:0;flex:1}
+.v935-admin-panel{grid-template-columns:minmax(0,1fr)}
+.v935-admin-panel article{min-width:0;overflow-x:auto}
+.user-table-wrap,.rev-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+main img,main video{max-width:100%}
+dialog{max-width:calc(100vw - 24px)}
+@media(max-width:900px){
+  aside{width:210px;padding:20px 10px}
+  main{padding:18px}
+  header{padding:0 18px}
+}
+@media(max-width:680px){
+  /* Menu em uma linha rolável, sempre visível no topo. */
+  aside{width:100%;padding:10px 12px 8px;position:sticky;top:0;z-index:50}
+  .brand{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 2px 8px;border:0}
+  .brand .av-logo{width:104px;margin:0}
+  .brand small{margin:0;font-size:9px}
+  .av-nav{display:flex;gap:4px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -12px;padding:0 12px 2px}
+  .av-nav::-webkit-scrollbar{display:none}
+  .av-nav .nav{flex:none;width:auto;white-space:nowrap;padding:8px 12px;font-size:13px}
+  header{height:auto;min-height:44px;padding:8px 14px}
+  header small{display:none}
+  main>section>h1{font-size:23px}
+  .rev-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .rev-tabs button{flex:none;white-space:nowrap}
+  .rev-toolbar>*{min-width:0;max-width:100%}
+  .v935-admin-panel article{padding:16px}
+  .param-toolbar{flex-wrap:wrap;gap:8px}
+  .admin-login-brand .av-logo{width:128px}
+}
+@media(max-width:680px){main{padding:12px}#parameterFields,#parameterFields .param-card{min-width:0;max-width:100%}#parameterFields{grid-template-columns:minmax(0,1fr)}}
+
+/* Integrações de IA: cadastro das chaves. */
+.integ-status{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 18px;padding:12px 14px;background:var(--av-offwhite);border:1px solid var(--av-line);border-radius:9px}
+.integ-detail{font-size:13px;color:var(--av-gray)}
+.integ-form .user-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.integ-form .user-field input,.integ-form .user-field select{width:100%;max-width:none;border:1px solid var(--av-line)}
+.integ-help{display:block;margin-top:10px;color:var(--av-gray)}
+.integ-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;margin-top:16px}
+.integ-actions button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:750px){.integ-form .user-grid{grid-template-columns:1fr}.integ-actions button{flex:1 1 auto}}

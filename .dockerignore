@@ -1,0 +1,7 @@
+.git
+*.bat
+__pycache__
+*.db*
+config.env
+comprovantes
+work

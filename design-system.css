@@ -1,6 +1,40 @@
 @import url('./assets/fonts/fonts.css');
-:root{--av-red:#F20C1F;--av-black:#101010;--av-white:#FFFFFF;--av-graphite:#1A1A1A;--av-gray:#656565;--av-offwhite:#F4F4F4;--av-red-deep:#BF1515;--av-line:#ddd;--av-radius:14px;--av-font-title:'Nunito','Segoe UI',sans-serif;--av-font-action:'Poppins','Segoe UI',sans-serif;--av-font-body:'Mulish','Segoe UI',sans-serif}
-html{color-scheme:light}body{font-family:var(--av-font-body);font-weight:400;color:var(--av-graphite);background:var(--av-offwhite)}
-h1,h2,h3,h4{font-family:var(--av-font-title);font-weight:900;color:var(--av-graphite)}
+/* Design System Auto Visão — paleta e tipografia do guia de Direção Visual v1.0 (out/2026).
+   Marca tricolor: vermelho, preto e branco. Verde só em estados "OK". */
+:root{
+  --av-red:#ED3237;            /* Vermelho marca: fundos de impacto, marcadores */
+  --av-red-deep:#C9232C;       /* Vermelho ação: botões e títulos em vermelho sobre branco */
+  --av-red-dark:#A81D25;       /* Estado pressionado do vermelho ação */
+  --av-red-tint:#FDEEEE;       /* Vermelho marca diluído: seleção e alerta */
+  --av-red-line:#F4B5B7;
+  --av-black:#151415;          /* Preto impacto */
+  --av-graphite:#1A1A1A;       /* Grafite */
+  --av-silhouette:#3A3A3C;
+  --av-gray:#696267;           /* Cinza texto */
+  --av-rim:#9A9597;
+  --av-white:#FFFFFF;
+  --av-offwhite:#F6F4F5;       /* Off-white: fundo de cartões secundários */
+  --av-line:#DED8DC;           /* Divisórias */
+  --av-ok:#18743B;             /* Verde "OK": só em pílulas OK / Conferido */
+  --av-ok-bg:#E7F4EC;
+  --av-radius:14px;
+  --av-font-title:'Nunito','Segoe UI',sans-serif;
+  --av-font-action:'Nunito','Segoe UI',sans-serif;
+  --av-font-body:'Inter','Segoe UI',sans-serif;
+}
+html{color-scheme:light}
+body{font-family:var(--av-font-body);font-weight:400;color:var(--av-graphite);background:var(--av-offwhite)}
+h1,h2,h3,h4{font-family:var(--av-font-title);font-weight:900;color:var(--av-black);letter-spacing:-.01em}
 button,input,select,textarea{font-family:var(--av-font-body)}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid var(--av-black)!important;outline-offset:3px}
+
+/* Kicker: Nunito 800, caixa alta, espaçamento .14em, com barra antes. */
+.av-kicker{display:flex;align-items:center;gap:8px;font-family:var(--av-font-title);font-weight:800;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.av-kicker::before{content:"";width:22px;height:3px;border-radius:2px;background:currentColor;flex:none}
+
+/* Fundo de impacto: vermelho marca com curvas concêntricas (preto a 9%), centro fora da peça, à direita. */
+.av-impact{position:relative;overflow:hidden;background-color:var(--av-red);color:var(--av-white);
+  background-image:repeating-radial-gradient(circle at 108% 50%,rgba(21,20,21,.09) 0 17px,transparent 17px 52px,rgba(21,20,21,.09) 52px 69px)}
+
+/* Logotipo oficial: versão principal sobre branco, branco integral sobre vermelho ou escuro. */
+.av-logo{display:block;height:auto;max-width:100%}

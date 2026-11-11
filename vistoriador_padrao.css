@@ -6,22 +6,99 @@
 #title{border-left:3px solid var(--av-red-deep);padding-left:10px;font-size:21px;margin:4px 0 5px}
 .operator-step-help{color:var(--ui-muted);margin-bottom:10px}
 .card,#who,.pay-part,#prices,#summary{border-color:var(--ui-line);border-radius:10px;box-shadow:0 2px 8px #1e293b04}
-.document-card{background:var(--ui-soft);border:1px solid #e0e7f0;box-shadow:none}
+.document-card{background:var(--ui-soft);border:1px solid #DED8DC;box-shadow:none}
 .document-card>p,.muted,small,.optional-mark{color:var(--ui-muted)}
-#chosen,#clientbanner{background:#fff4f6;border:1px solid var(--ui-selected-line);border-left:3px solid var(--av-red-deep);box-shadow:none}
-#bannername,#chosen>b{color:#7b2435}
+#chosen,#clientbanner{background:#FDEEEE;border:1px solid var(--ui-selected-line);border-left:3px solid var(--av-red-deep);box-shadow:none}
+#bannername,#chosen>b{color:#A81D25}
 #bannerstatus{background:white!important;border-color:var(--ui-selected-line)!important}
 .step-progress li{background:var(--ui-soft);border-color:var(--ui-line);color:var(--ui-muted)}
 .step-progress li.is-current{background:var(--ui-selected);border-color:var(--ui-selected-line);color:var(--av-red-deep)}
-.step-progress li.is-done{background:#edf1f6;border-color:#d4dbe4}
-.choice{border-color:#d4dbe4}.choice.on{background:var(--ui-selected);border-color:var(--av-red-deep);color:var(--av-red-deep)}
+.step-progress li.is-done{background:#F6F4F5;border-color:#DED8DC}
+.choice{border-color:#DED8DC}.choice.on{background:var(--ui-selected);border-color:var(--av-red-deep);color:var(--av-red-deep)}
 #s3>.row{gap:8px;margin-bottom:10px}#s3>label{margin-top:10px}
 #servicelist{background:white;padding:5px 10px}.check{border-bottom-color:var(--ui-line);padding:8px 2px}.check:hover{background:var(--ui-soft)}
 #flow .sticky{background:#fffffffa;border-top:1px solid var(--ui-line);padding:8px 0;backdrop-filter:blur(8px)}
-.proof-read-box,#summary>details>summary{background:var(--ui-soft);border-color:#e0e7f0}
+.proof-read-box,#summary>details>summary{background:var(--ui-soft);border-color:#DED8DC}
 .financial-heading{background:var(--ui-soft);color:var(--av-graphite);border-bottom:1px solid var(--ui-line);border-left:4px solid var(--av-red-deep)}
 .financial-cell:first-child{background:var(--ui-soft)}.financial-cell,.financial-grid,.financial-state{border-color:var(--ui-line)}
-.financial-state.is-difference{background:#fcf0f2;border-left-color:var(--av-red-deep);color:var(--av-red-deep)}
+.financial-state.is-difference{background:#FDEEEE;border-left-color:var(--av-red-deep);color:var(--av-red-deep)}
 .financial-state.is-balanced,.financial-state.is-pending{background:var(--ui-soft)}
 .operator-validation{border-color:var(--ui-line);border-top-color:var(--av-red-deep)}
 @media(max-width:600px){#flow{padding:11px 10px 0;border-radius:10px}.wrap{padding-left:10px;padding-right:10px}#title{font-size:20px}.operator-form-grid{gap:8px}#clientbanner{padding:8px 10px}.document-card{padding:8px 10px}}
+
+/* Design System Auto Visão — cabeçalho de impacto do vistoriador. */
+.operator-brand{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;padding:14px 16px;border:0;border-radius:14px;
+  position:relative;overflow:hidden;background-color:var(--av-red);color:var(--av-white);
+  background-image:repeating-radial-gradient(circle at 108% 50%,rgba(21,20,21,.09) 0 17px,transparent 17px 52px,rgba(21,20,21,.09) 52px 69px)}
+.operator-brand strong{font-family:var(--av-font-title);font-weight:900;font-size:20px;letter-spacing:.01em;color:var(--av-white)}
+.operator-brand>div>span{display:inline-flex;align-items:center;gap:7px;margin:3px 0 0;font-family:var(--av-font-title);font-weight:800;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--av-white)}
+.operator-brand>div>span::before{content:"";width:18px;height:3px;border-radius:2px;background:var(--av-white)}
+.operator-brand .app-badge{background:transparent;color:var(--av-white);border:1px solid rgba(255,255,255,.5);border-radius:999px;padding:4px 10px;font-family:var(--av-font-title);font-weight:800;font-size:10px;white-space:nowrap}
+.os-meta-value{font-family:var(--av-font-title)}
+#config>h1,#home #who h1{font-size:24px}
+.primary{letter-spacing:.02em}
+.pill{border-color:var(--av-line);color:var(--av-gray)}
+.operator-brand .av-logo{width:132px}
+.operator-brand>div>br{display:none}
+.operator-brand>div>span{margin-top:8px}
+
+/* Design System Auto Visão — refinamentos do vistoriador. */
+/* A data de abertura só faz sentido com uma OS em andamento. */
+.wrap:has(#flow.hidden) .os-meta-header{display:none}
+#config>h1{margin-top:6px}
+#config .card{padding:18px 16px}
+#config .card label{display:block;margin:10px 0 5px}
+#config .card label:first-child{margin-top:0}
+#config .primary{width:100%;margin-top:16px;min-height:48px;height:48px;border-radius:12px}
+/* Início: identificação em cartão, com Sair discreto e Nova OS como ação principal. */
+#who{position:relative;background:var(--av-white);border:1px solid var(--av-line);border-radius:14px;padding:14px 96px 14px 16px;margin:0 0 12px}
+#who h1{margin:0 0 2px;font-size:22px}
+#who>div{color:var(--av-gray);font-size:14px}
+#who button{position:absolute;top:50%;right:14px;transform:translateY(-50%);margin:0!important;min-height:36px;padding:0 16px;background:var(--av-white);color:var(--av-black);border:1px solid var(--av-line);border-radius:999px;font-size:12px;letter-spacing:.06em;cursor:pointer}
+#who button:hover{border-color:var(--av-black)}
+#home>#new{display:block;width:100%;min-height:54px;font-size:17px;border-radius:14px;margin:0 0 12px;box-shadow:0 14px 24px -14px rgba(201,35,44,.8)}
+#home .card{border-radius:14px;padding:16px}
+#home .card>b{display:block;font-family:var(--av-font-title);font-weight:900;font-size:16px;color:var(--av-black)}
+#pend{font-family:var(--av-font-title);font-weight:900;font-size:34px;line-height:1.1;color:var(--av-black);margin-top:4px}
+/* Etapas da OS: trilha horizontal. */
+.step-progress{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0;margin:2px 0 14px}
+.step-progress li{display:flex;align-items:center;justify-content:center;gap:6px;min-width:0;padding:7px 4px;border:1px solid var(--av-line);border-radius:999px;background:var(--av-offwhite);color:var(--av-gray);font-family:var(--av-font-title);font-weight:800;font-size:11px;white-space:nowrap}
+.step-progress .step-number{display:inline-flex;align-items:center;justify-content:center;flex:none;width:18px;height:18px;border-radius:50%;background:var(--av-white);border:1px solid var(--av-line);font-size:10px;color:var(--av-gray)}
+.step-progress li.is-current{background:var(--av-red-tint);border-color:var(--av-red-line);color:var(--av-red-deep)}
+.step-progress li.is-current .step-number{background:var(--av-red);border-color:var(--av-red);color:var(--av-white)}
+.step-progress li.is-done{background:var(--av-white);border-color:var(--av-line);color:var(--av-black)}
+.step-progress li.is-done .step-number{background:var(--av-black);border-color:var(--av-black);color:var(--av-white)}
+@media(max-width:380px){.step-progress li{font-size:10px;gap:4px}.step-progress .step-number{width:16px;height:16px}}
+.optional-mark{margin-left:6px;font-family:var(--av-font-body);font-weight:500;font-size:12px}
+.choice{border-radius:10px;font-family:var(--av-font-title);font-weight:800}
+.choice.on{outline:0;background:var(--av-red-tint);border-color:var(--av-red-deep);color:var(--av-red-deep)}
+#flow .sticky button{min-height:46px;border-radius:12px}
+#who button{width:auto;left:auto;display:inline-flex}
+.step-progress{gap:4px}
+.step-progress li{gap:4px;padding:6px 2px;font-size:10.5px;overflow:hidden}
+.step-progress .step-number{width:17px;height:17px;font-size:9.5px}
+/* Marcadores de documento: pílula ao lado do título. */
+.document-card h2{display:flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:17px;margin:0 0 4px}
+.document-status{display:inline-flex;align-items:center;padding:2px 9px;border-radius:999px;font-family:var(--av-font-body);font-weight:600;font-size:11px;letter-spacing:0}
+.document-status.is-optional{background:var(--av-white);border:1px solid var(--av-line);color:var(--av-gray)}
+.document-status.is-required{background:var(--av-red-tint);border:1px solid var(--av-red-line);color:var(--av-red-deep)}
+label .optional-mark,label .required-mark{display:inline;text-align:left}
+.required-mark{color:var(--av-red-deep)}
+label[data-operator-field]{display:flex;align-items:baseline;justify-content:flex-start;flex-wrap:wrap;gap:0 6px;text-align:left}
+label[data-operator-field] .optional-mark{margin-left:0}
+
+/* Responsividade do vistoriador. */
+.wrap img{max-width:100%}
+@media(max-width:400px){
+  .operator-brand{padding:12px 14px}
+  .operator-brand .app-badge{display:none}
+  .step-progress{gap:3px}
+  .step-progress li{gap:3px;padding:5px 0;font-size:9.5px}
+  .step-progress .step-number{width:15px;height:15px;font-size:9px}
+  #who{padding-right:86px}
+}
+@media(min-width:700px){
+  .operator-brand{padding:18px 22px}
+  .operator-brand .av-logo{width:150px}
+  .step-progress li{font-size:12px;padding:8px 6px}
+}

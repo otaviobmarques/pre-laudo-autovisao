@@ -1,7 +1,7 @@
-/* Administração — Integração IA e Integração Vision OCR: cadastro das chaves.
+/* Administração — Integração IA: cadastro da chave usada na leitura de comprovantes (Vision).
    A chave é enviada ao servidor e nunca volta inteira para a tela. */
 (function(){
-  const PAGINAS={'Integração Vision OCR':'vision','Integração IA':'ia'};
+  const PAGINAS={'Integração IA':'vision'};
   const el=(tag,props,...kids)=>{const n=document.createElement(tag);Object.assign(n,props||{});kids.forEach(k=>n.append(k));return n};
   function campo(id,rotulo,input){return el('div',{className:'user-field'},el('label',{htmlFor:id,textContent:rotulo}),input)}
   function montar(nome){

@@ -332,8 +332,7 @@ def save_document(data_url, os_internal, kind):
 
 # Chaves de integração cadastradas pela Administração. A chave nunca volta inteira para a tela.
 INTEGRACOES={
-    "vision":{"titulo":"Vision OCR","env_chave":"OPENAI_API_KEY","env_modelo":"OPENAI_MODEL","modelo_padrao":"gpt-5.5","provedor_padrao":"OpenAI"},
-    "ia":{"titulo":"IA","env_chave":"IA_API_KEY","env_modelo":"IA_MODEL","modelo_padrao":"","provedor_padrao":""},
+    "vision":{"titulo":"IA (Vision)","env_chave":"OPENAI_API_KEY","env_modelo":"OPENAI_MODEL","modelo_padrao":"gpt-5.5","provedor_padrao":"OpenAI"},
 }
 def integracao_config(nome):
     """Chave em uso: a cadastrada no painel tem prioridade sobre a variável de ambiente."""
@@ -1013,7 +1012,7 @@ class Handler(SimpleHTTPRequestHandler):
             from openai import OpenAI
             cfg=integracao_config("vision")
             key=cfg["chave"]
-            if not key: raise RuntimeError("Chave do Vision OCR não configurada. Cadastre em Administração > Integração Vision OCR.")
+            if not key: raise RuntimeError("Chave de IA não configurada. Cadastre em Administração > Integração IA.")
             model=cfg["modelo"]
             client=OpenAI(api_key=key)
             resp=client.responses.create(
@@ -1091,7 +1090,7 @@ class Handler(SimpleHTTPRequestHandler):
             nome=str(body.get("integracao") or "")
             try:
                 if path.endswith("/testar"):
-                    if nome!="vision": raise ValueError("Teste disponível apenas para o Vision OCR.")
+                    if nome!="vision": raise ValueError("Integração desconhecida.")
                     try: modelo=integracao_testar_vision()
                     except ValueError: raise
                     except Exception as e: return json_response(self,400,{"ok":False,"erro":"A OpenAI recusou a chave ou o modelo: "+str(e)[:300]})

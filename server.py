@@ -897,6 +897,9 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path=urlparse(self.path).path
+        if path.rstrip("/").lower() in ("/admin","/administracao"):
+            # Atalho curto para o Painel Administrativo.
+            self.send_response(302);self.send_header("Location","/Camada_Intermediaria_v9346_Precos_ERP.html");self.send_header("Content-Length","0");self.end_headers();return
         if path in ("","/"):
             # A raiz do domínio abre o Pré-Laudo do vistoriador; o laboratório segue em /index.html.
             self.send_response(302);self.send_header("Location","/Pre_Laudo_Auto_Visao_v370_Precos_ERP.html");self.send_header("Content-Length","0");self.end_headers();return

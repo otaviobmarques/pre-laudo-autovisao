@@ -3,7 +3,7 @@
   "name": "Auto Visão Administração",
   "short_name": "Administração",
   "description": "Administração do Pré-Laudo da Auto Visão.",
-  "start_url": "/Camada_Intermediaria_v9346_Precos_ERP.html",
+  "start_url": "/admin",
   "lang": "pt-BR",
   "dir": "ltr",
   "scope": "/",

@@ -32,7 +32,26 @@ def protect(data,decrypt=False):
 def save_access(username,password):
  ACCESS.parent.mkdir(parents=True,exist_ok=True);blob=protect(json.dumps({'username':username,'password':password},ensure_ascii=False).encode());temp=ACCESS.with_suffix('.tmp');temp.write_bytes(blob);temp.replace(ACCESS)
 
-def load_access():return json.loads(protect(ACCESS.read_bytes(),True).decode())
+def env_access():
+ """Acesso do ERP por variáveis de ambiente (hospedagem): ERPFLEX_USERNAME e ERPFLEX_PASSWORD."""
+ username=(os.environ.get('ERPFLEX_USERNAME') or '').strip();password=os.environ.get('ERPFLEX_PASSWORD') or ''
+ return {'username':username,'password':password} if username and password else None
+
+# O servidor registra aqui a leitura do acesso cadastrado no Painel Administrativo.
+PANEL_ACCESS=None
+def panel_access():
+ try:value=PANEL_ACCESS() if PANEL_ACCESS else None
+ except Exception:value=None
+ return value if value and value.get('username') and value.get('password') else None
+
+def has_access():
+ """Há acesso configurado: painel administrativo, variáveis de ambiente ou a credencial protegida do Windows."""
+ return bool(panel_access() or env_access()) or ACCESS.exists()
+
+def access_source():
+ return 'painel' if panel_access() else 'ambiente' if env_access() else 'windows' if ACCESS.exists() else None
+
+def load_access():return panel_access() or env_access() or json.loads(protect(ACCESS.read_bytes(),True).decode())
 
 def init(con):
  con.execute('CREATE TABLE IF NOT EXISTS erp_clientes(erp_id TEXT PRIMARY KEY,local_id TEXT NOT NULL UNIQUE,data_json TEXT NOT NULL)')
@@ -115,7 +134,7 @@ class Sync:
   self.db=db_factory;self.baseline=baseline;self.config=config;self.running=False;self.error=None;self.stop_event=threading.Event();self.started=False
  def status(self):
   with self.db() as con:state=snapshot(con) or {}
-  return {**state,'configurado':ACCESS.exists(),'em_execucao':self.running,'ultimo_erro':self.error or state.get('erro'),'automatico':ACCESS.exists(),'frequencia':'Diariamente às 03:00 (horário de Brasília)','limite_tentativas_diarias':1}
+  return {**state,'configurado':has_access(),'em_execucao':self.running,'ultimo_erro':self.error or state.get('erro'),'automatico':has_access(),'frequencia':'Diariamente às 03:00 (horário de Brasília)','limite_tentativas_diarias':1}
  def synchronize(self,credentials=None):
   if not LOCK.acquire(blocking=False):raise ValueError('Uma atualização de clientes já está em execução.')
   owner=uuid.uuid4().hex;leased=False;self.running=True
@@ -142,7 +161,7 @@ class Sync:
     with self.db() as con:con.execute('DELETE FROM erp_clientes_lease WHERE id=1 AND owner=?',(owner,))
    self.running=False;LOCK.release()
  def run_daily(self):
-  if not ACCESS.exists():return False
+  if not has_access():return False
   with self.db() as con:
    con.execute('BEGIN IMMEDIATE');init(con)
    if not daily_due(snapshot(con)):return False

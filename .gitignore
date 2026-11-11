@@ -7,6 +7,6 @@ config.env
 *.dpapi
 *.log
 __pycache__/
-comprovantes/
-work/
+comprovantes
+work
 bi_vendas/

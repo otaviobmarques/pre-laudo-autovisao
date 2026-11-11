@@ -14,9 +14,26 @@ from urllib.parse import urlparse, parse_qs
 
 ROOT = Path(__file__).resolve().parent
 os.chdir(ROOT)
-DB_PATH = ROOT / "pre_laudo_teste.db"
+# Hospedagem: DATA_DIR aponta para o volume persistente. Sem ela, tudo fica na pasta do programa.
+DATA_DIR = Path(os.environ.get("DATA_DIR") or ROOT).resolve()
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+DB_PATH = DATA_DIR / "pre_laudo_teste.db"
 COMPROVANTES_DIR = ROOT / "comprovantes"
-COMPROVANTES_DIR.mkdir(exist_ok=True)
+def _persistent(name, is_dir):
+    """Mantém em DATA_DIR o que o programa grava ao lado do código."""
+    local=ROOT/name
+    if DATA_DIR==ROOT:
+        if is_dir: local.mkdir(exist_ok=True)
+        return local
+    target=DATA_DIR/name
+    if is_dir:
+        target.mkdir(parents=True,exist_ok=True)
+        if not local.is_symlink() and not local.exists(): local.symlink_to(target,target_is_directory=True)
+        return local
+    if not target.exists() and local.exists(): target.write_bytes(local.read_bytes())
+    return target
+_persistent("comprovantes",True)
+_persistent("work",True)
 
 def load_env():
     p = ROOT / "config.env"
@@ -229,7 +246,7 @@ def authenticate(login,password):
     SESSOES[token]={"id":user["id"],"expires":datetime.now(timezone.utc)+timedelta(hours=12)}
     return token,{k:v for k,v in current.items() if k in ("id","login","vistoriador_id","vistoriador_nome","unidade_id","unidade_nome","vistoriador_erp_id")}
 
-CATALOGO_PATH = ROOT / "catalogo_erp_base.json"
+CATALOGO_PATH = _persistent("catalogo_erp_base.json",False)
 def catalogo():
     with CATALOGO_PATH.open(encoding="utf-8") as f:
         result=json.load(f)
@@ -324,7 +341,7 @@ def json_response(h, status, obj):
 EDITABLE_FIELDS = ("cliente_id","cliente_nome","placa","marca","modelo","local_vistoria",
  "condutor","cpf","email","celular","requisicao_cliente","pagamento_os")
 ADMIN_SESSIONS={}
-ADMIN_CATALOG=ROOT/"catalogo_precos_v93.json"
+ADMIN_CATALOG=_persistent("catalogo_precos_v93.json",False)
 def admin_catalog():
     result=json.loads(ADMIN_CATALOG.read_text(encoding="utf-8"))
     with db() as con:
@@ -909,8 +926,6 @@ class Handler(SimpleHTTPRequestHandler):
             return json_response(self,200,{"ok":True,"database":DB_PATH.name,"comprovantes":str(COMPROVANTES_DIR.name),"parametros_schema":3,"parametros_campos":sorted(policy.DEFAULTS),"servidor_build":"precos-erp-1"})
         if path=="/api/admin/os/historico":
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
-            if self.client_address[0] not in ("127.0.0.1","::1"):
-                return json_response(self,403,{"ok":False,"erro":"Acesso administrativo somente local."})
             from urllib.parse import parse_qs
             try: os_id=int(parse_qs(urlparse(self.path).query).get("id",[0])[0])
             except (ValueError,TypeError): return json_response(self,400,{"ok":False,"erro":"ID inválido"})
@@ -1043,8 +1058,6 @@ class Handler(SimpleHTTPRequestHandler):
         if path=="/api/admin/os/liberar":
             user=admin_user(self)
             if not user: return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
-            if self.client_address[0] not in ("127.0.0.1","::1"):
-                return json_response(self,403,{"ok":False,"erro":"Liberação administrativa somente local."})
             body["_operador_autenticado"]=user["login"]
             try: return json_response(self,200,{"ok":True,**liberar_os_administrativamente(body)})
             except PermissionError as e: return json_response(self,403,{"ok":False,"erro":str(e)})
@@ -1053,8 +1066,6 @@ class Handler(SimpleHTTPRequestHandler):
             user=admin_user(self)
             if not user: return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
             body["_operador_autenticado"]=user["login"]
-            if self.client_address[0] not in ("127.0.0.1","::1"):
-                return json_response(self,403,{"ok":False,"erro":"Edição administrativa somente no computador servidor."})
             try: return json_response(self,200,{"ok":True,**edit_os(body)})
             except PermissionError as e: return json_response(self,403,{"ok":False,"erro":str(e)})
             except (ValueError,TypeError) as e: return json_response(self,400,{"ok":False,"erro":str(e)})
@@ -1265,9 +1276,21 @@ class ExclusiveHTTPServer(ThreadingHTTPServer):
             self.socket.setsockopt(socket.SOL_SOCKET,socket.SO_EXCLUSIVEADDRUSE,1)
         super().server_bind()
 
+def ensure_initial_admin():
+    """Cria o primeiro administrador a partir de ADMIN_LOGIN/ADMIN_PASSWORD, somente se não houver nenhum."""
+    login=(os.environ.get("ADMIN_LOGIN") or "").strip().lower()
+    senha=os.environ.get("ADMIN_PASSWORD") or ""
+    if not login or len(senha)<6: return
+    with db() as con:
+        if con.execute("SELECT 1 FROM usuarios_administrativos LIMIT 1").fetchone(): return
+        con.execute("INSERT INTO usuarios_administrativos(nome,login,senha_hash,ativo) VALUES(?,?,?,1)",("Administrador",login,hash_password(senha)))
+    print("Administrador inicial criado:",login)
+
 def main(on_ready=None):
+    host=os.environ.get("HOST") or ("0.0.0.0" if os.environ.get("PORT") else "127.0.0.1")
+    port=int(os.environ.get("PORT") or 8765)
     try:
-        http=ExclusiveHTTPServer(("127.0.0.1",8765),Handler)
+        http=ExclusiveHTTPServer((host,port),Handler)
     except OSError as error:
         if getattr(error,'winerror',None) in (10048,10013) or getattr(error,'errno',None) in (98,48):
             print('Nao foi possivel iniciar: a porta 8765 ja esta ocupada ou indisponivel.')
@@ -1276,11 +1299,12 @@ def main(on_ready=None):
         raise
     try:
         init_db()
+        ensure_initial_admin()
     except Exception:
         http.server_close()
         raise
     print("Pré-Laudo / Vision / SQLite")
-    print("Servidor: http://127.0.0.1:8765/")
+    print(f"Servidor: http://{host}:{port}/")
     print("Banco:",DB_PATH)
     print("Comprovantes:",COMPROVANTES_DIR)
     try:

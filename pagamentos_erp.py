@@ -1,7 +1,7 @@
 """Formas de pagamento ERP: IDs estáveis e regras locais preservadas."""
 import json,threading,time,uuid
 from datetime import datetime,timezone,timedelta
-from clientes_erp import ACCESS,load_access,local_time
+from clientes_erp import ACCESS,has_access,load_access,local_time
 from consultar_pagamentos_erpflex import fetch_payments
 from parametros import normalize
 LOCK=threading.Lock()
@@ -97,7 +97,7 @@ class Sync:
   self.db=db_factory;self.baseline=baseline;self.config=config;self.running=False;self.error=None;self.stop_event=threading.Event();self.started=False
  def status(self):
   with self.db() as con:state=snapshot(con) or {}
-  return {**state,'configurado':ACCESS.exists(),'em_execucao':self.running,'ultimo_erro':self.error or state.get('erro'),'automatico':ACCESS.exists(),'frequencia':'Diariamente às 03:20 (horário de Brasília)','limite_tentativas_diarias':1}
+  return {**state,'configurado':has_access(),'em_execucao':self.running,'ultimo_erro':self.error or state.get('erro'),'automatico':has_access(),'frequencia':'Diariamente às 03:20 (horário de Brasília)','limite_tentativas_diarias':1}
  def synchronize(self,credentials=None,preloaded=None):
   if not LOCK.acquire(blocking=False):raise ValueError('Uma atualização de pagamentos já está em execução.')
   owner=uuid.uuid4().hex;leased=False;self.running=True
@@ -126,7 +126,7 @@ class Sync:
     with self.db() as con:con.execute('DELETE FROM erp_pagamentos_lease WHERE id=1 AND owner=?',(owner,))
    self.running=False;LOCK.release()
  def run_daily(self):
-  if not ACCESS.exists():return False
+  if not has_access():return False
   with self.db() as con:
    con.execute('BEGIN IMMEDIATE');init(con)
    if not daily_due(snapshot(con)):return False

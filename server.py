@@ -1041,23 +1041,23 @@ class Handler(SimpleHTTPRequestHandler):
 
         if path=="/api/admin/transportadoras/sincronizar":
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
-            if not clientes_erp.ACCESS.exists(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso local à API antes de atualizar."})
+            if not clientes_erp.has_access(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso à API do ERP antes de atualizar."})
             return json_response(self,202,{"ok":True,"iniciada":carrier_sync().trigger()})
         if path=="/api/admin/pagamentos/sincronizar":
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
-            if not clientes_erp.ACCESS.exists(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso local à API antes de atualizar."})
+            if not clientes_erp.has_access(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso à API do ERP antes de atualizar."})
             return json_response(self,202,{"ok":True,"iniciada":payment_sync().trigger()})
         if path=="/api/admin/precos/sincronizar":
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
-            if not clientes_erp.ACCESS.exists(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso local à API antes de atualizar."})
+            if not clientes_erp.has_access(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso à API do ERP antes de atualizar."})
             return json_response(self,202,{"ok":True,"iniciada":product_sync().trigger()})
         if path=="/api/admin/produtos/sincronizar":
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
-            if not clientes_erp.ACCESS.exists(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso local à API antes de atualizar."})
+            if not clientes_erp.has_access(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso à API do ERP antes de atualizar."})
             return json_response(self,202,{"ok":True,"iniciada":product_sync().trigger()})
         if path=="/api/admin/clientes/sincronizar":
             if not admin_user(self): return json_response(self,401,{"ok":False,"erro":"Login administrativo obrigatório."})
-            if not clientes_erp.ACCESS.exists(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso local à API antes de atualizar."})
+            if not clientes_erp.has_access(): return json_response(self,400,{"ok":False,"erro":"Configure o acesso à API do ERP antes de atualizar."})
             return json_response(self,202,{"ok":True,"iniciada":client_sync().trigger()})
         if path=="/api/admin/parametros":
             user=admin_user(self)
